@@ -9,14 +9,13 @@ const socket = io("http://localhost:5000");
 function App() {
     const [connectionAccepted, setConnectionAccepted] = useState(false);
     const [connectionEnded, setConnectionEnded] = useState(false);
+    const [messages, setMessages] = useState([]); // [{name, message}
     const [name, setName] = useState("");
     const [activeConnection, setActiveConnection] = useState({});
     const [me, setMe] = useState("");
     const [peerId, setPeerId] = useState("");
     const [message, setMessage] = useState("");
 
-    const myVideo = useRef();
-    const userVideo = useRef();
     const connectionRef = useRef();
 
     useEffect(() => {
@@ -47,6 +46,7 @@ function App() {
         const peer = new Peer({ initiator: false, trickle: false });
 
         peer.on("signal", (data) => {
+            alert("connection accepted with data", JSON.stringify(data));
             socket.emit("acceptConnection", {
                 signal: data,
                 to: activeConnection.from,
@@ -55,7 +55,10 @@ function App() {
 
         peer.on("data", (data) => {
             var string = new TextDecoder("utf-8").decode(data);
-            console.log(string);
+            setMessages([
+                ...messages,
+                { id: activeConnection.from, message: string },
+            ]);
         });
 
         peer.signal(activeConnection.signal);
@@ -67,6 +70,7 @@ function App() {
         const peer = new Peer({ initiator: true, trickle: false });
 
         peer.on("signal", (data) => {
+            alert("pair Initialized with data", JSON.stringify(data));
             socket.emit("initializeConnection", {
                 userToCall: id,
                 signalData: data,
@@ -77,7 +81,8 @@ function App() {
 
         peer.on("data", (data) => {
             var string = new TextDecoder("utf-8").decode(data);
-            console.log(string);
+
+            setMessages([...messages, { id: id, message: string }]);
         });
 
         socket.on("connectionAccepted", (signal) => {
@@ -99,6 +104,7 @@ function App() {
     return (
         <>
             <h1>WebRTC Connection </h1>
+            <h3>Your Id : {me}</h3>
             <input
                 type="text"
                 placeholder="Peer ID"
@@ -109,10 +115,6 @@ function App() {
             </button>
             <button onClick={acceptConnection}>Accept Connection</button>
 
-            <div>
-                <video ref={myVideo} autoPlay playsInline></video>
-                <video ref={userVideo} autoPlay playsInline></video>
-            </div>
             <input
                 onChange={(e) => setMessage(e.target.value)}
                 type="text"
@@ -121,6 +123,14 @@ function App() {
                 id=""
             />
             <button onClick={sendMessage}>Send</button>
+            {messages.map(({ id, message }) => {
+                return (
+                    <div style={{}}>
+                        <h5>sender: {id}</h5>
+                        <p>{message}</p>
+                    </div>
+                );
+            })}
         </>
     );
 }
