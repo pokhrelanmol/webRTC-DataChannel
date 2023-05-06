@@ -6,26 +6,20 @@ const { Server } = require("socket.io");
 const io = new Server(server, {
     cors: true,
 });
+
 io.on("connection", (socket) => {
     socket.emit("me", socket.id);
 
-    socket.on("disconnect", () => {
-        socket.broadcast.emit("connectionEnded");
+    socket.on("sendRequest", ({ _to, signal, from }) => {
+        console.log("sendRequest", from);
+        io.to(_to).emit("requestReceived", {
+            signal,
+            from,
+        });
     });
 
-    socket.on(
-        "initializeConnection",
-        ({ userToCall, signalData, from, name }) => {
-            io.to(userToCall).emit("initializeConnection", {
-                signal: signalData,
-                from,
-                name,
-            });
-        }
-    );
-
-    socket.on("acceptConnection", (data) => {
-        io.to(data.to).emit("connectionAccepted", data.signal);
+    socket.on("acceptRequest", ({ _to, from, signal }) => {
+        io.to(data.to).emit("requestAccepted", signal);
     });
 });
 
