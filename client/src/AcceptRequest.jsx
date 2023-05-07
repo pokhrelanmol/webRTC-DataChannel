@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Peer from "simple-peer";
 import { useSocket } from "./SocketContext";
 import { useMessage } from "./MessageContext";
@@ -10,6 +10,8 @@ const AcceptRequest = () => {
     const { peer, setPeer } = usePeer();
     const [requestFrom, setRequestFrom] = useState("");
     const [activeConnection, setActiveConnection] = useState();
+    const [me, setMe] = useState("");
+    const [accepted, setAccepted] = useState(false);
 
     useEffect(() => {
         socket.on("requestReceived", (data) => {
@@ -18,6 +20,9 @@ const AcceptRequest = () => {
                 from: data.from,
                 signal: data.signal,
             });
+        });
+        socket.on("me", (id) => {
+            setMe(id);
         });
     }, []);
     const acceptRequest = () => {
@@ -29,11 +34,14 @@ const AcceptRequest = () => {
                 signal: data,
             });
         });
-
+        socket.on("YouAcceptedRequest", () => {
+            setAccepted(true);
+        });
         peer.on("data", (data) => {
             // message from the another party
             const _message = new TextDecoder("utf-8").decode(data);
-            setMessages([...messages, _message]);
+            console.log(_message);
+            // setMessages([...messages, _message]);
         });
 
         peer.signal(activeConnection.signal);
@@ -47,6 +55,7 @@ const AcceptRequest = () => {
                     <button onClick={acceptRequest}>Accept Request</button>
                 </div>
             )}
+            {accepted && <div>You Accepted the Request</div>}
         </div>
     );
 };

@@ -11,7 +11,6 @@ const SendRequest = () => {
     const [myId, setMyId] = useState("");
     const [accepted, setAccepted] = useState(false); // if the request is accepted or not
     const { peer, setPeer } = usePeer();
-    console.log(socket);
     useEffect(() => {
         socket.on("me", (id) => {
             setMyId(id);
@@ -37,7 +36,8 @@ const SendRequest = () => {
         peer.on("data", (data) => {
             // receive message from peer
             const _message = new TextDecoder("utf-8").decode(data);
-            setMessages([...messages, _message]);
+            // setMessages([...messages, _message]);
+            console.log(_message);
         });
 
         setPeer(peer);
@@ -57,7 +57,7 @@ const SendRequest = () => {
             {accepted && (
                 <>
                     <p>Request Accepted</p>
-                    <p>You are now friend with {id} </p>
+                    <p>You are now friend</p>
                 </>
             )}
         </div>

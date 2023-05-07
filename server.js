@@ -19,7 +19,9 @@ io.on("connection", (socket) => {
     });
 
     socket.on("acceptRequest", ({ _to, from, signal }) => {
-        io.to(data.to).emit("requestAccepted", signal);
+        console.log(_to);
+        io.to(_to).emit("requestAccepted", signal);
+        io.to(from).emit("YouAcceptedRequest");
     });
 });
 
