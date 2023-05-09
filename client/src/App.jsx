@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
-import "./App.css";
 import Peer from "simple-peer";
 import SendRequest from "./SendRequest";
 import { useSocket } from "./SocketContext";
 import AcceptRequest from "./AcceptRequest";
 import SendMessage from "./SendMessage";
+import RegisterUser from "./RegisterUser";
+import { Routes, Route } from "react-router-dom";
+import Chat from "./components/Chat";
 function App() {
     const [connectionAccepted, setConnectionAccepted] = useState(false);
     const [connectionEnded, setConnectionEnded] = useState(false);
@@ -18,28 +20,21 @@ function App() {
     const [message, setMessage] = useState("");
     const socket = useSocket();
 
-    useEffect(() => {
-        socket.on("requestReceived", ({ from, signal }) => {
-            setActiveConnection({
-                isReceivingCall: true,
-                from,
-                signal,
-            });
-        });
-        socket.on("requestAccepted", () => {
-            setConnectionAccepted(true);
-        });
-    }, []);
-
     return (
         <>
-            <h1>WebRTC Connection </h1>
-            <h1>Send Request</h1>
+            <h1 className="text-red-800 text-2xl text-center ">Chat App</h1>
+            <Routes>
+                <Route path="/" element={<RegisterUser />} />
+            </Routes>
+            <Routes>
+                <Route path="/chat" element={<Chat />} />
+            </Routes>
+            {/* <h1>Send Request</h1>
             <SendRequest />
             <h1>Accept Request</h1>
             <AcceptRequest />
             <h1>Send Message</h1>
-            <SendMessage />
+            <SendMessage /> */}
         </>
     );
 }

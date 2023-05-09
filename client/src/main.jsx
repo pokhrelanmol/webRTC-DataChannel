@@ -5,13 +5,16 @@ import "./index.css";
 import SocketProvider from "./SocketContext.jsx";
 import MessageProvider from "./MessageContext.jsx";
 import PeerProvider from "./PeerContext.jsx";
+import UserProvider from "./contexts/UserContext.jsx";
+
+import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <MessageProvider>
-        <PeerProvider>
-            <SocketProvider>
+    <UserProvider>
+        <MessageProvider>
+            <BrowserRouter>
                 <App />
-            </SocketProvider>
-        </PeerProvider>
-    </MessageProvider>
+            </BrowserRouter>
+        </MessageProvider>
+    </UserProvider>
 );

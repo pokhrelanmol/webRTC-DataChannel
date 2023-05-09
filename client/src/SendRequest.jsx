@@ -17,6 +17,7 @@ const SendRequest = () => {
             console.log(id);
         });
     }, []);
+    const sendRequest = () => {};
     const handleSendRequest = () => {
         const peer = new Peer({ initiator: true, trickle: false }); // init peer object
         //   get data from peer
