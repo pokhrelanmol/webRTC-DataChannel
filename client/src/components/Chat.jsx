@@ -1,10 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { cloneElement, useEffect, useRef, useState } from "react";
 import { useUser } from "../contexts/UserContext";
 import { userChats } from "../services/chat";
 import { useNavigate } from "react-router-dom";
 import Conversation from "./Conversations";
 import ChatBox from "./ChatBox";
-import { io } from "socket.io-client";
+import { useSocket } from "../contexts/SocketContext";
+import { usePeer } from "../contexts/PeerContext";
+import Peer from "peerjs";
 
 const Chat = () => {
     const { currentUser } = useUser();
@@ -13,8 +15,23 @@ const Chat = () => {
     const [sendMessage, setSendMessage] = useState(null);
     const [recievedMessage, setRecievedMessage] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState([]);
+    const [myPeerId, setMyPeerId] = useState("");
     const navigate = useNavigate();
-    const socket = useRef();
+    const socket = useSocket();
+    const _peer = new Peer();
+    const { setPeer, peer } = usePeer();
+
+    // useEffect(() => {
+    //     if (_peer) {
+    //         _peer.on("connection", (conn) => {
+    //             conn.on("data", (data) => {
+    //                 // setRecievedMessage(data);
+    //                 console.log(data);
+    //             });
+    //         });
+    //     }
+    // }, [peer]);
+
     useEffect(() => {
         if (!currentUser) navigate("/");
         const getChats = async () => {
@@ -27,26 +44,37 @@ const Chat = () => {
         };
         getChats();
     }, []);
+
     useEffect(() => {
-        socket.current = io("http://localhost:5000");
-        socket.current.emit("new-user-add", currentUser?._id);
-        socket.current.on("get-users", (users) => {
-            setOnlineUsers(users);
-            console.log(users);
-        });
-    }, [currentUser]);
-    //  receive message from socket server
-    useEffect(() => {
-        socket.current.on("recieve-message", (message) => {
-            setRecievedMessage(message);
-        });
-    }, []);
-    // Send message to socket server
-    useEffect(() => {
-        if (sendMessage !== null) {
-            socket.current.emit("send-message", sendMessage);
+        if (currentUser) {
+            _peer.on("open", (id) => {
+                console.log("Initial Peer Id: ", id);
+                setMyPeerId(id);
+                socket.emit("new-user-add", {
+                    newUserId: currentUser?._id,
+                    peerId: id,
+                });
+                socket.on("get-users", (users) => {
+                    console.log("Online Users: ", users);
+                    setOnlineUsers(users);
+                });
+            });
         }
-    }, [sendMessage]);
+    }, []);
+
+    //  receive message from socket server
+    // useEffect(() => {
+    //     console.log(peer);
+    //     socket.on("recieve-message", (message) => {
+    //         setRecievedMessage(message);
+    //     });
+    // }, []);
+    // Send message to socket server
+    // useEffect(() => {
+    //     if (sendMessage !== null) {
+    //         socket.emit("send-message", sendMessage);
+    //     }
+    // }, [sendMessage]);
 
     return (
         <div className="flex justify-around">
@@ -70,12 +98,15 @@ const Chat = () => {
 
             <div>
                 <ChatBox
+                    peer={_peer}
                     chat={currentChat}
                     currentUser={currentUser?._id}
                     setSendMessage={setSendMessage}
                     recievedMessage={recievedMessage}
+                    setRecievedMessage={setRecievedMessage}
                 />
             </div>
+            <div>My Id {myPeerId}</div>
         </div>
     );
 };

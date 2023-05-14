@@ -1,12 +1,38 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { getUser } from "../services/user";
 import { addMessage, getMessages } from "../services/message";
+import { useSocket } from "../contexts/SocketContext";
+import { usePeer } from "../contexts/PeerContext";
+import { io } from "socket.io-client";
 
-const ChatBox = ({ chat, currentUser, setSendMessage, recievedMessage }) => {
+const ChatBox = ({
+    chat,
+    currentUser,
+    setSendMessage,
+    recievedMessage,
+    setRecievedMessage,
+    peer,
+}) => {
+    const [connection, setConnection] = useState(null);
     const [userData, setUserData] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
-
+    const socket = useSocket();
+    const [peerId, setPeerId] = useState("");
+    const makeInitialCall = () => {
+        const senderId = currentUser;
+        const receiverId = chat?.members?.find((id) => id !== currentUser);
+        socket.emit("send-user-to-call", { senderId, receiverId });
+    };
+    const connectPeer = useCallback((peerId) => {
+        console.log("peerid to connect: ", peerId);
+        const conn = peer.connect(peerId);
+        setConnection(conn);
+        conn.on("open", () => {
+            console.log("connection open");
+            conn.send("hi!");
+        }); //this is working
+    }, []);
     useEffect(() => {
         const userId = chat?.members?.find((id) => id !== currentUser);
         const getUserData = async () => {
@@ -19,7 +45,7 @@ const ChatBox = ({ chat, currentUser, setSendMessage, recievedMessage }) => {
         };
 
         if (chat !== null) getUserData();
-    }, [chat, currentUser]);
+    }, []);
 
     // fetch messages
     useEffect(() => {
@@ -33,8 +59,34 @@ const ChatBox = ({ chat, currentUser, setSendMessage, recievedMessage }) => {
         };
 
         if (chat !== null) fetchMessages();
+    }, [chat?.members, chat?._id]);
+    useEffect(() => {
+        if (chat !== null) {
+            console.log("make intial call");
+            makeInitialCall();
+        }
+        socket.on("make-call", (peerId) => {
+            console.log("render times");
+            connectPeer(peerId);
+        });
     }, [chat]);
-    // Send Message
+    // Listen for connection
+
+    useEffect(() => {
+        peer.on("connection", (conn) => {
+            conn.on("data", (data) => {
+                setRecievedMessage(JSON.parse(data));
+            });
+        });
+    }, []);
+    // Receive Message from parent component
+    useEffect(() => {
+        console.log(chat?._id, recievedMessage?.chatId);
+        if (recievedMessage !== null && recievedMessage?.chatId === chat?._id) {
+            setMessages([...messages, recievedMessage]);
+        }
+    }, [recievedMessage]);
+
     const handleSend = async (e) => {
         e.preventDefault();
         const message = {
@@ -42,9 +94,10 @@ const ChatBox = ({ chat, currentUser, setSendMessage, recievedMessage }) => {
             text: newMessage,
             chatId: chat._id,
         };
+
         const receiverId = chat.members.find((id) => id !== currentUser);
-        // send message to socket server
-        setSendMessage({ ...message, receiverId });
+        console.log("connection", connection);
+        connection.send(JSON.stringify({ ...message }));
         // send message to database
         try {
             const { data } = await addMessage(message);
@@ -54,14 +107,6 @@ const ChatBox = ({ chat, currentUser, setSendMessage, recievedMessage }) => {
             console.log("error");
         }
     };
-    // Receive Message from parent component
-    useEffect(() => {
-        console.log("Message Arrived: ", recievedMessage);
-        if (recievedMessage !== null && recievedMessage?.chatId === chat?._id) {
-            setMessages([...messages, recievedMessage]);
-        }
-    }, [recievedMessage]);
-    console.log(chat);
     return (
         <div>
             {!chat ? (
@@ -69,9 +114,16 @@ const ChatBox = ({ chat, currentUser, setSendMessage, recievedMessage }) => {
             ) : (
                 <div>
                     <div>{userData?.email ? userData.email : "Loading..."}</div>
+                    <input
+                        type="text"
+                        onChange={(e) => setPeerId(e.target.value)}
+                        placeholder="Peer Id"
+                    />
+                    <button onClick={() => connectPeer(peerId)}>Connect</button>
                     <div>
-                        {messages.map((message) => (
+                        {messages.map((message, id) => (
                             <div
+                                key={id}
                                 className={`${
                                     message?.senderId === currentUser
                                         ? "flex justify-end"

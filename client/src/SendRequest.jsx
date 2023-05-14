@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useSocket } from "./SocketContext";
 import Peer from "simple-peer";
 import { useMessage } from "./MessageContext";
-import { usePeer } from "./PeerContext";
+import { usePeer } from "./contexts/PeerContext";
+import { useSocket } from "./contexts/SocketContext";
 
 const SendRequest = () => {
     const socket = useSocket();

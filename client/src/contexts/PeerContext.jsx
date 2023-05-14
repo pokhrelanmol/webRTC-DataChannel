@@ -1,5 +1,4 @@
 import { createContext, useContext, useRef, useState } from "react";
-import { io } from "socket.io-client";
 
 const PeerContext = createContext();
 

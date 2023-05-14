@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { usePeer } from "./PeerContext";
+import { usePeer } from "./contexts/PeerContext";
 
 const SendMessage = () => {
     const { peer, setPeer } = usePeer();

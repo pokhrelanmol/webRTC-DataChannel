@@ -7,12 +7,10 @@ const Conversation = ({ data }) => {
     const [userData, setUserData] = useState(null);
 
     useEffect(() => {
-        console.log(data.members);
         const userId = data.members.find((id) => id !== currentUser._id);
         const getUserData = async () => {
             try {
                 const { data } = await getUser(userId);
-                console.log(data);
                 setUserData(data);
             } catch (error) {
                 console.log(error);

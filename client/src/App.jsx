@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
-import Peer from "simple-peer";
 import SendRequest from "./SendRequest";
-import { useSocket } from "./SocketContext";
+import { useSocket } from "./contexts/SocketContext";
 import AcceptRequest from "./AcceptRequest";
 import SendMessage from "./SendMessage";
 import RegisterUser from "./RegisterUser";
