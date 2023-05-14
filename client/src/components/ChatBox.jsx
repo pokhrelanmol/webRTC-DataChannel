@@ -45,7 +45,7 @@ const ChatBox = ({
         };
 
         if (chat !== null) getUserData();
-    }, []);
+    }, [chat]);
 
     // fetch messages
     useEffect(() => {
@@ -114,13 +114,7 @@ const ChatBox = ({
             ) : (
                 <div>
                     <div>{userData?.email ? userData.email : "Loading..."}</div>
-                    <input
-                        type="text"
-                        onChange={(e) => setPeerId(e.target.value)}
-                        placeholder="Peer Id"
-                    />
-                    <button onClick={() => connectPeer(peerId)}>Connect</button>
-                    <div>
+                    <div className="space-y-2">
                         {messages.map((message, id) => (
                             <div
                                 key={id}
