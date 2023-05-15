@@ -2,13 +2,9 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { getUser } from "../services/user";
 import { addMessage, getMessages } from "../services/message";
 import { useSocket } from "../contexts/SocketContext";
-import { usePeer } from "../contexts/PeerContext";
-import { io } from "socket.io-client";
-
 const ChatBox = ({
     chat,
     currentUser,
-    setSendMessage,
     recievedMessage,
     setRecievedMessage,
     peer,
@@ -18,7 +14,6 @@ const ChatBox = ({
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const socket = useSocket();
-    const [peerId, setPeerId] = useState("");
     const makeInitialCall = () => {
         const senderId = currentUser;
         const receiverId = chat?.members?.find((id) => id !== currentUser);
@@ -30,7 +25,6 @@ const ChatBox = ({
         setConnection(conn);
         conn.on("open", () => {
             console.log("connection open");
-            conn.send("hi!");
         }); //this is working
     }, []);
     useEffect(() => {
@@ -66,7 +60,6 @@ const ChatBox = ({
             makeInitialCall();
         }
         socket.on("make-call", (peerId) => {
-            console.log("render times");
             connectPeer(peerId);
         });
     }, [chat]);
@@ -95,9 +88,8 @@ const ChatBox = ({
             chatId: chat._id,
         };
 
-        const receiverId = chat.members.find((id) => id !== currentUser);
-        console.log("connection", connection);
         connection.send(JSON.stringify({ ...message }));
+
         // send message to database
         try {
             const { data } = await addMessage(message);

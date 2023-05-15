@@ -9,6 +9,7 @@ import { usePeer } from "../contexts/PeerContext";
 import Peer from "peerjs";
 import User from "./User";
 import axios from "axios";
+import Users from "./Users";
 
 const Chat = () => {
     const { currentUser } = useUser();
@@ -21,10 +22,6 @@ const Chat = () => {
     const navigate = useNavigate();
     const socket = useSocket();
     const _peer = new Peer();
-    const { setPeer, peer } = usePeer();
-    const [allUsers, setAllUsers] = useState([]);
-    const [filteredUsers, setFilteredUsers] = useState([]);
-    const [search, setSearch] = useState("");
 
     useEffect(() => {
         if (!currentUser) navigate("/");
@@ -37,73 +34,28 @@ const Chat = () => {
             }
         };
         getChats();
-    }, []);
-    useEffect(() => {
-        if (!currentUser) navigate("/");
-        const getAllUsers = async () => {
-            axios.get("http://localhost:8000/api/v1/user").then((res) => {
-                setAllUsers(res.data);
-            });
-        };
-        getAllUsers();
-    }, []);
+    }, [chats]);
+
     useEffect(() => {
         if (currentUser) {
             _peer.on("open", (id) => {
-                console.log("Initial Peer Id: ", id);
                 setMyPeerId(id);
                 socket.emit("new-user-add", {
                     newUserId: currentUser?._id,
                     peerId: id,
                 });
                 socket.on("get-users", (users) => {
-                    console.log("Online Users: ", users);
                     setOnlineUsers(users);
                 });
             });
         }
     }, []);
-    const handleSearch = (e) => {
-        setSearch(e.target.value);
-        const filteredUsers = allUsers.filter((user) =>
-            user.email.includes(e.target.value)
-        );
-        setFilteredUsers(filteredUsers);
-    };
 
     return (
         <div className="flex justify-around">
             {/* Search bar */}
 
-            <div className="flex flex-col ml-20 gap-5 shadow-lg max-w-fit p-4">
-                <input
-                    type="text"
-                    placeholder="Search"
-                    className="border-2 border-gray-300 rounded-lg p-2"
-                    onChange={(e) => {
-                        handleSearch(e);
-                    }}
-                />
-                <div>
-                    {filteredUsers.length > 0
-                        ? filteredUsers.map((user) => (
-                              <div
-                                  className="bg-gray-200 p-2 rounded-lg cursor-pointer space-y-3"
-                                  onClick={() => {}}
-                              >
-                                  <User data={user} />
-                              </div>
-                          ))
-                        : allUsers?.map((user) => (
-                              <div
-                                  className="bg-gray-200 p-2 rounded-lg cursor-pointer space-y-3"
-                                  onClick={() => {}}
-                              >
-                                  <User data={user} />
-                              </div>
-                          ))}
-                </div>
-            </div>
+            <Users setChats={setChats} />
             {/* Left Convesation Panel */}
 
             <div className="flex flex-col ml-20 gap-5 shadow-lg max-w-fit p-4">
@@ -123,7 +75,7 @@ const Chat = () => {
             </div>
             {/* Right Chat Box */}
 
-            <div>
+            <div className="flex-grow">
                 <ChatBox
                     peer={_peer}
                     chat={currentChat}

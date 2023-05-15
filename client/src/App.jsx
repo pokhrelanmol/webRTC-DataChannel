@@ -1,13 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import SendRequest from "./SendRequest";
 import { useSocket } from "./contexts/SocketContext";
-import AcceptRequest from "./AcceptRequest";
-import SendMessage from "./SendMessage";
-import RegisterUser from "./RegisterUser";
 import { Routes, Route } from "react-router-dom";
 import Chat from "./components/Chat";
+import RegisterUser from "./components/RegisterUser";
 function App() {
     const [connectionAccepted, setConnectionAccepted] = useState(false);
     const [connectionEnded, setConnectionEnded] = useState(false);

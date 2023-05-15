@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { logIn } from "./services/Auth";
-import { useUser } from "./contexts/UserContext";
+import { useUser } from "../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
+import { logIn } from "../services/Auth";
 const RegisterUser = () => {
     const [email, setEmail] = useState("");
     const navigate = useNavigate();
