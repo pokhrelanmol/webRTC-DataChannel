@@ -3,7 +3,7 @@ import axios from "axios";
 import { useUser } from "../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import { logIn, register } from "../services/Auth";
-import { generateKeypairs } from "../services/kilt/keyAggrement";
+import { generateKeypairs } from "../lib/src/kilt/keyAggrement";
 const Auth = () => {
     const [did, setDid] = useState("");
     const [mnemonic, setMnemonic] = useState("");

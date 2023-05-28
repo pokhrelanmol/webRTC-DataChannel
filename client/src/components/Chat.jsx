@@ -57,8 +57,9 @@ const Chat = () => {
             <div className="flex flex-col ml-20 gap-5 shadow-lg max-w-fit p-4">
                 <h1>CHats</h1>
                 <div>
-                    {chats?.map((chat) => (
+                    {chats?.map((chat, index) => (
                         <div
+                            key={index}
                             className="bg-gray-200 p-2 rounded-lg cursor-pointer space-y-3"
                             onClick={() => {
                                 setCurrentChat(chat);
@@ -70,17 +71,18 @@ const Chat = () => {
                 </div>
             </div>
             {/* Right Chat Box */}
-
-            <div className="flex-grow">
-                <ChatBox
-                    peer={_peer}
-                    chat={currentChat}
-                    currentUser={currentUser?._id}
-                    setSendMessage={setSendMessage}
-                    recievedMessage={recievedMessage}
-                    setRecievedMessage={setRecievedMessage}
-                />
-            </div>
+            {currentChat && (
+                <div className="flex-grow">
+                    <ChatBox
+                        peer={_peer}
+                        chat={currentChat}
+                        currentUser={currentUser?._id}
+                        setSendMessage={setSendMessage}
+                        recievedMessage={recievedMessage}
+                        setRecievedMessage={setRecievedMessage}
+                    />
+                </div>
+            )}
         </div>
     );
 };

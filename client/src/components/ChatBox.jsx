@@ -1,8 +1,16 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import { getUser } from "../services/user";
 import { addMessage, getMessages } from "../services/message";
 import { useSocket } from "../contexts/SocketContext";
 import { formatDid } from "../utils";
+import { queryFullDid } from "../lib/src/kilt/didResolver";
+import * as Kilt from "@kiltprotocol/sdk-js";
 const ChatBox = ({
     chat,
     currentUser,
@@ -14,6 +22,7 @@ const ChatBox = ({
     const [userData, setUserData] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
+    const [receiverDidDoc, setReceiverDidDoc] = useState({});
     const socket = useSocket();
     const makeInitialCall = () => {
         const senderId = currentUser;
@@ -27,6 +36,17 @@ const ChatBox = ({
         conn.on("open", () => {
             console.log("connection open");
         }); //this is working
+    }, []);
+
+    useEffect(() => {
+        (async () => {
+            // await Kilt.connect("wss://peregrine.kilt.io/parachain-public-ws");
+            const receiverId = chat?.members?.find((id) => id !== currentUser);
+            const { data } = await getUser(receiverId);
+            console.log("data: ", data);
+            const didDoc = await queryFullDid(data.did);
+            console.log("didDoc: ", didDoc);
+        })();
     }, []);
     useEffect(() => {
         const userId = chat?.members?.find((id) => id !== currentUser);
@@ -75,7 +95,6 @@ const ChatBox = ({
     }, []);
     // Receive Message from parent component
     useEffect(() => {
-        console.log(chat?._id, recievedMessage?.chatId);
         if (recievedMessage !== null && recievedMessage?.chatId === chat?._id) {
             setMessages([...messages, recievedMessage]);
         }

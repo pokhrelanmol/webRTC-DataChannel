@@ -40,16 +40,18 @@ const Users = ({ setChats }) => {
                 />
                 <div>
                     {filteredUsers.length > 0
-                        ? filteredUsers.map((user) => (
+                        ? filteredUsers.map((user, index) => (
                               <div
+                                  key={index}
                                   className="bg-gray-200 p-2 rounded-lg cursor-pointer space-y-3"
                                   onClick={() => {}}
                               >
                                   <User setChats={setChats} data={user} />
                               </div>
                           ))
-                        : allUsers?.map((user) => (
+                        : allUsers?.map((user, index) => (
                               <div
+                                  key={index}
                                   className="bg-gray-200 p-2 rounded-lg cursor-pointer space-y-3"
                                   onClick={() => {}}
                               >
