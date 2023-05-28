@@ -22,7 +22,7 @@ const Users = ({ setChats }) => {
     const handleSearch = (e) => {
         setSearch(e.target.value);
         const filteredUsers = allUsers.filter((user) =>
-            user.email.includes(e.target.value)
+            user.did.includes(e.target.value)
         );
         setFilteredUsers(filteredUsers);
     };

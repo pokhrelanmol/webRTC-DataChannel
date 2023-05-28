@@ -5,10 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Conversation from "./Conversations";
 import ChatBox from "./ChatBox";
 import { useSocket } from "../contexts/SocketContext";
-import { usePeer } from "../contexts/PeerContext";
 import Peer from "peerjs";
-import User from "./User";
-import axios from "axios";
 import Users from "./Users";
 
 const Chat = () => {
@@ -17,7 +14,6 @@ const Chat = () => {
     const [currentChat, setCurrentChat] = useState(null);
     const [sendMessage, setSendMessage] = useState(null);
     const [recievedMessage, setRecievedMessage] = useState(null);
-    const [onlineUsers, setOnlineUsers] = useState([]);
     const [myPeerId, setMyPeerId] = useState("");
     const navigate = useNavigate();
     const socket = useSocket();
@@ -44,9 +40,9 @@ const Chat = () => {
                     newUserId: currentUser?._id,
                     peerId: id,
                 });
-                socket.on("get-users", (users) => {
-                    setOnlineUsers(users);
-                });
+                // socket.on("get-users", (users) => {
+                //     setOnlineUsers(users);
+                // });
             });
         }
     }, []);

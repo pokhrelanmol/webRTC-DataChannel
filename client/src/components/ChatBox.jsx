@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { getUser } from "../services/user";
 import { addMessage, getMessages } from "../services/message";
 import { useSocket } from "../contexts/SocketContext";
+import { formatDid } from "../utils";
 const ChatBox = ({
     chat,
     currentUser,
@@ -105,7 +106,9 @@ const ChatBox = ({
                 <div>Select a chat</div>
             ) : (
                 <div>
-                    <div>{userData?.email ? userData.email : "Loading..."}</div>
+                    <div>
+                        {userData?.did ? formatDid(userData.did) : "Loading..."}
+                    </div>
                     <div className="space-y-2">
                         {messages.map((message, id) => (
                             <div

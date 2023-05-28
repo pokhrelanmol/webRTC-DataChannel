@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSocket } from "./contexts/SocketContext";
 import { Routes, Route } from "react-router-dom";
 import Chat from "./components/Chat";
-import RegisterUser from "./components/RegisterUser";
+import Auth from "./components/Auth";
 function App() {
     const [connectionAccepted, setConnectionAccepted] = useState(false);
     const [connectionEnded, setConnectionEnded] = useState(false);
@@ -18,17 +18,11 @@ function App() {
         <>
             <h1 className="text-red-800 text-2xl text-center ">Chat App</h1>
             <Routes>
-                <Route path="/" element={<RegisterUser />} />
+                <Route path="/" element={<Auth />} />
             </Routes>
             <Routes>
                 <Route path="/chat" element={<Chat />} />
             </Routes>
-            {/* <h1>Send Request</h1>
-            <SendRequest />
-            <h1>Accept Request</h1>
-            <AcceptRequest />
-            <h1>Send Message</h1>
-            <SendMessage /> */}
         </>
     );
 }

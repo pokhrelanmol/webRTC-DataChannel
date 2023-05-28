@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useUser } from "../contexts/UserContext";
 import { getUser } from "../services/user";
+import { formatDid } from "../utils";
 const Conversation = ({ data }) => {
     // fetch all user chats
     const { currentUser } = useUser();
@@ -21,14 +22,13 @@ const Conversation = ({ data }) => {
         getUserData();
     }, []);
 
-    const handleOpenChat = (id) => {};
     return (
         <div className="">
             <span
                 className="bg-gray-500 text-white py-1 px-3 rounded-lg cursor-pointer"
-                onClick={() => handleOpenChat(userData._id)}
+                onClick={() => handleOpenChat(userData?._id)}
             >
-                {userData?.email}
+                {userData?.did && formatDid(userData.did)}
             </span>
         </div>
     );
