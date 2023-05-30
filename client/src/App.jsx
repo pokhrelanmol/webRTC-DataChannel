@@ -1,10 +1,10 @@
 import { Routes, Route } from "react-router-dom";
+
 import Chat from "./components/Chat";
 import Auth from "./components/Auth";
 
 import * as Kilt from "@kiltprotocol/sdk-js";
-import { useEffect } from "react";
-import { getDidDoc } from "./lib/src/kilt/didResolver";
+import { useEffect, useState } from "react";
 function App() {
     useEffect(() => {
         (async () => {
@@ -13,7 +13,9 @@ function App() {
     }, []);
     return (
         <>
-            <h1 className="text-red-800 text-2xl text-center ">Chat App</h1>
+            <h1 className="text-red-800 shadow-md p-4 text-4xl text-center font-bold ">
+                Kilt Chat App
+            </h1>
             <Routes>
                 <Route path="/" element={<Auth />} />
             </Routes>

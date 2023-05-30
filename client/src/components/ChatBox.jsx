@@ -31,6 +31,20 @@ const ChatBox = ({
     const socket = useSocket();
     const _chat = useRef();
     const { currentUser: user } = useUser();
+
+    const container = useRef();
+
+    const Scroll = () => {
+        const { offsetHeight, scrollHeight, scrollTop } = container.current;
+        if (scrollHeight <= scrollTop + offsetHeight + 100) {
+            container.current?.scrollTo(0, scrollHeight);
+        }
+    };
+
+    useEffect(() => {
+        Scroll();
+    }, [messages]);
+
     const makeInitialCall = () => {
         const senderId = currentUser;
         const receiverId = chat?.members?.find((id) => id !== currentUser);
@@ -141,9 +155,14 @@ const ChatBox = ({
         }
     };
     return (
-        <div className="overflow-y-scroll max-h-96">
+        <div
+            ref={container}
+            className="h-[700px] overflow-y-scroll rounded-md bg-gray-300 flex flex-col-reverse p-5 shadow-xl  "
+        >
             {!chat ? (
-                <div>Select a chat</div>
+                <div className="h-screen w-full justify-self-center bg-gray-300 text-center text-5xl rounded-md shadow-md">
+                    Select a chat
+                </div>
             ) : (
                 <div>
                     <div>
@@ -159,14 +178,21 @@ const ChatBox = ({
                                         : "flex justify-start"
                                 }`}
                             >
-                                <div
-                                    className={`${
-                                        message?.senderId === currentUser
-                                            ? "bg-blue-500"
-                                            : "bg-gray-500"
-                                    } text-white p-2 rounded-lg`}
-                                >
-                                    {message?.text}
+                                <div>
+                                    <span className="text-xs">
+                                        {message?.senderId === currentUser
+                                            ? "You"
+                                            : "Other"}
+                                    </span>
+                                    <div
+                                        className={`${
+                                            message?.senderId === currentUser
+                                                ? "bg-purple-500"
+                                                : "bg-gray-500"
+                                        } text-white p-2 rounded-lg`}
+                                    >
+                                        {message?.text}
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -175,13 +201,13 @@ const ChatBox = ({
                         <form className="space-y-2 mt-5" onSubmit={handleSend}>
                             <input
                                 type="text"
-                                className="border p-2 w-full"
-                                placeholder="Type a message"
+                                className="border p-3 w-full rounded-md shadow-md"
+                                placeholder="Type a message..."
                                 value={newMessage}
                                 onChange={(e) => setNewMessage(e.target.value)}
                             />
                             <button
-                                className="bg-blue-500 text-white float-right p-2 rounded-lg"
+                                className="bg-blue-500 text-white float-right px-10 py-3 text-lg font-semibold rounded-lg"
                                 type="submit"
                             >
                                 Send

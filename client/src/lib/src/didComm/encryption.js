@@ -19,7 +19,7 @@ export function encryptMessage(message, sharedSecret, signature) {
             signature,
         };
         const encrypted = Buffer.concat([
-            cipher.update(JSON.stringify(_msg), "utf8"),
+            cipher.update(JSON.stringify(message), "utf8"),
             cipher.final(),
         ]);
         const tag = cipher.getAuthTag();

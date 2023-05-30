@@ -23,10 +23,8 @@ const Conversation = ({ data }) => {
     }, []);
 
     return (
-        <div className="">
-            <span className="bg-gray-500 text-white py-1 px-3 rounded-lg cursor-pointer">
-                {userData?.did && formatDid(userData.did)}
-            </span>
+        <div className="bg-red-500 text-center text-xl text-white p-3 shadow-md w-full rounded-lg cursor-pointer">
+            {userData?.did && formatDid(userData.did)}
         </div>
     );
 };

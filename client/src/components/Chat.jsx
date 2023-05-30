@@ -48,23 +48,35 @@ const Chat = () => {
     }, []);
 
     return (
-        <div className="flex gap-5">
+        <div className="flex gap-10 justify-around">
             {/* Search bar */}
 
-            <Users setChats={setChats} />
+            {/* <Users setChats={setChats} /> */}
             {/* Left Convesation Panel */}
 
-            <div className="flex flex-col gap-5 shadow-lg max-w-fit p-4">
-                <h1>CHats</h1>
+            <div className="flex ml-10 flex-col gap-5 min-w-[300px] shadow-lg max-w-fit p-4">
+                <h1 className="text-center text-gray-400 font-bold text-lg">
+                    CHats
+                </h1>
                 <div>
                     {chats?.map((chat, index) => (
                         <div
                             key={index}
-                            className="bg-gray-200 p-2 rounded-lg cursor-pointer space-y-3"
+                            className="space-y-6 min-w-full overflow-y-scroll h-[500px]"
                             onClick={() => {
                                 setCurrentChat(chat);
                             }}
                         >
+                            <Conversation data={chat} />
+
+                            <Conversation data={chat} />
+                            <Conversation data={chat} />
+                            <Conversation data={chat} />
+                            <Conversation data={chat} />
+                            <Conversation data={chat} />
+                            <Conversation data={chat} />
+                            <Conversation data={chat} />
+                            <Conversation data={chat} />
                             <Conversation data={chat} />
                         </div>
                     ))}
@@ -72,7 +84,7 @@ const Chat = () => {
             </div>
             {/* Right Chat Box */}
             {/* {currentChat && ( */}
-            <div className="flex-grow">
+            <div className="flex-1">
                 <ChatBox
                     peer={_peer}
                     chat={currentChat}

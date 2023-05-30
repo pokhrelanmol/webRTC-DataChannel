@@ -59,17 +59,19 @@ const Auth = () => {
     };
 
     return (
-        <div className="flex flex-col h-screen justify-center bg-gray-300 p-2 items-center gap-2 ">
-            <h1 className="text-xl">{isLoggingIn ? "Login" : "Register"}</h1>
+        <div className="flex flex-col h-screen justify-center bg-[#E76161] p-2 items-center gap-2 ">
+            <h1 className="text-2xl font-bold">
+                {isLoggingIn ? "Login" : "Register"}
+            </h1>
             <form
-                className="flex flex-col gap-3"
+                className="flex border shadow-md rounded-md p-20  flex-col gap-3"
                 action=""
                 onSubmit={isLoggingIn ? loginUser : registerUser}
             >
                 <input
                     autoComplete="on"
                     type="text"
-                    className="border p-2 w-96"
+                    className="rounded-full shadow-md px-4 py-2 w-96"
                     placeholder="Mnemonic/seed Phrase"
                     onChange={(e) => setMnemonic(e.target.value)}
                     name="mnemonic"
@@ -78,7 +80,7 @@ const Auth = () => {
                     name="did"
                     autoComplete="on"
                     type="text"
-                    className="border p-2"
+                    className="rounded-full shadow-md px-4 py-2 w-96"
                     placeholder="DID"
                     onChange={(e) => setDid(e.target.value)}
                 />
@@ -91,14 +93,14 @@ const Auth = () => {
                 <div>
                     {isLoggingIn ? (
                         <p
-                            className="hover:text-blue-500 cursor-pointer"
+                            className="hover:text-white text-lg cursor-pointer"
                             onClick={(e) => setIsLogginIn(false)}
                         >
                             Register
                         </p>
                     ) : (
                         <p
-                            className="hover:text-blue-500 cursor-pointer"
+                            className="hover:text-white cursor-pointer text-lg"
                             onClick={(e) => setIsLogginIn(true)}
                         >
                             Login
