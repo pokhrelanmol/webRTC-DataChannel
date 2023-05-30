@@ -53,10 +53,8 @@ export async function createFullDid(submitterAccount) {
     };
 }
 
-export async function queryFullDid(didUri) {
+export async function getDidDoc(didUri) {
     try {
-        await Kilt.connect("wss://peregrine.kilt.io/parachain-public-ws");
-        const api = Kilt.ConfigService.get("api");
         const resolutionResult = await Kilt.Did.resolve(didUri);
 
         if (

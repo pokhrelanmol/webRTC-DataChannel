@@ -28,7 +28,7 @@ const Users = ({ setChats }) => {
     };
     return (
         <div>
-            <div className="flex flex-col ml-20 gap-5 shadow-lg max-w-fit p-4">
+            <div className="flex flex-col gap-2 shadow-lg max-w-fit">
                 <input
                     type="text"
                     placeholder="Search"

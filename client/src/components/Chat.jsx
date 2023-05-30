@@ -48,13 +48,13 @@ const Chat = () => {
     }, []);
 
     return (
-        <div className="flex justify-around">
+        <div className="flex gap-5">
             {/* Search bar */}
 
             <Users setChats={setChats} />
             {/* Left Convesation Panel */}
 
-            <div className="flex flex-col ml-20 gap-5 shadow-lg max-w-fit p-4">
+            <div className="flex flex-col gap-5 shadow-lg max-w-fit p-4">
                 <h1>CHats</h1>
                 <div>
                     {chats?.map((chat, index) => (
@@ -71,18 +71,18 @@ const Chat = () => {
                 </div>
             </div>
             {/* Right Chat Box */}
-            {currentChat && (
-                <div className="flex-grow">
-                    <ChatBox
-                        peer={_peer}
-                        chat={currentChat}
-                        currentUser={currentUser?._id}
-                        setSendMessage={setSendMessage}
-                        recievedMessage={recievedMessage}
-                        setRecievedMessage={setRecievedMessage}
-                    />
-                </div>
-            )}
+            {/* {currentChat && ( */}
+            <div className="flex-grow">
+                <ChatBox
+                    peer={_peer}
+                    chat={currentChat}
+                    currentUser={currentUser?._id}
+                    setSendMessage={setSendMessage}
+                    recievedMessage={recievedMessage}
+                    setRecievedMessage={setRecievedMessage}
+                />
+            </div>
+            {/* )} */}
         </div>
     );
 };

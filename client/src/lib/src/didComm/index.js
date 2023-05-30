@@ -1,12 +1,10 @@
 import { waitReady } from "@polkadot/wasm-crypto";
-import { KiltKeyringPair } from "@kiltprotocol/sdk-js";
-import { createMessage, parseMessage, validateMessage } from "./message";
-import { encryptMessage, decryptMessage } from "./encryption";
+import { encryptMessage } from "./encryption";
+import { decryptMessage } from "./decryption";
 import { signMessage, verifyMessageSignature } from "./signing";
-import { deriveSharedSecret } from "../utils/secretResolver";
-import * as Kilt from "@kiltprotocol/sdk-js";
+import { deriveSharedSecret } from "../kilt/secretResolver";
 import nacl from "tweetnacl";
-import { generateKeypairs } from "../utils/keyManagement";
+import { generateKeypairs } from "../kilt/keyAggrement";
 
 // Send a DIDComm message
 export async function sendMessage(
@@ -19,7 +17,6 @@ export async function sendMessage(
     try {
         // Sign the message
         await waitReady();
-        await Kilt.connect(process.env.WSS_ADDRESS);
         const { authentication } = generateKeypairs(seed);
         const signature = await signMessage(
             message,
@@ -31,7 +28,7 @@ export async function sendMessage(
         );
         // Generate a random nonce
         const nonce = nacl.randomBytes(nacl.box.nonceLength);
-
+        console.log("nonce encrypting", nonce);
         // Encrypt the message and the signature using the nonce
 
         const sharedSecretUint8Array = deriveSharedSecret(
@@ -40,11 +37,7 @@ export async function sendMessage(
             nonce
         );
         const sharedSecret = Buffer.from(sharedSecretUint8Array); //why convert to buffer?
-        const encrypted = encryptMessage(
-            { ...message },
-            sharedSecret,
-            signature
-        );
+        const encrypted = encryptMessage({ ...message }, sharedSecret);
         console.log("This is the encrypted message:", encrypted);
 
         console.log("Message sent successfully");
@@ -71,6 +64,8 @@ export async function receiveMessage(
         );
 
         const sharedSecret = Buffer.from(sharedSecretUint8Array);
+        console.log("This is the shared secret:", sharedSecret);
+        console.log("This is the encrypted message:", encrypted);
         const message = decryptMessage(encrypted, sharedSecret);
 
         // Verify the signature

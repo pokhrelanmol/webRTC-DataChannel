@@ -1,5 +1,5 @@
 import * as Kilt from "@kiltprotocol/sdk-js";
-import { queryFullDid } from "../utils/didResolver";
+import { getDidDoc } from "../kilt/didResolver";
 
 // Sign a DIDComm message
 export async function signMessage(message, signCallback, didUri) {
@@ -11,7 +11,7 @@ export async function signMessage(message, signCallback, didUri) {
         };
         const signResult = await signCallback(signData);
         console.log("Message signed successfully");
-        const document = await queryFullDid(didUri);
+        const document = await getDidDoc(didUri);
         const keyId = document?.authentication[0].id;
 
         return {

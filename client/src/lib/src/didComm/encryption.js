@@ -1,7 +1,7 @@
-import crypto from "crypto";
+import { randomBytes, createHmac, createCipheriv } from "crypto-browserify";
 
 export function deriveKey(sharedSecret) {
-    const hmac = crypto.createHmac("sha256", sharedSecret);
+    const hmac = createHmac("sha256", sharedSecret);
     hmac.update("Some constant value"); // This could be a nonce, for example
     return hmac.digest();
 }
@@ -11,9 +11,9 @@ export function encryptMessage(message, sharedSecret, signature) {
     try {
         const key = deriveKey(sharedSecret);
 
-        const iv = crypto.randomBytes(12);
+        const iv = randomBytes(12);
 
-        const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
+        const cipher = createCipheriv("aes-256-gcm", key, iv);
         const _msg = {
             ...message,
             signature,

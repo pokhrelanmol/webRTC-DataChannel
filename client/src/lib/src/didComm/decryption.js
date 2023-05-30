@@ -1,3 +1,5 @@
+import { createDecipheriv } from "crypto-browserify";
+import { deriveKey } from "./encryption";
 export function decryptMessage(encrypted, sharedSecret) {
     try {
         const key = deriveKey(sharedSecret);
@@ -7,7 +9,7 @@ export function decryptMessage(encrypted, sharedSecret) {
         const tag = encrypted.subarray(12, 28);
 
         const text = encrypted.subarray(28);
-        const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
+        const decipher = createDecipheriv("aes-256-gcm", key, iv);
         decipher.setAuthTag(tag);
         const decrypted = decipher.update(text) + decipher.final("utf8");
         console.log("Message decrypted successfully");
